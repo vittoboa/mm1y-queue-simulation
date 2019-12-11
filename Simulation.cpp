@@ -1,13 +1,11 @@
 #include <iostream>
 #include "utils.h"
 #include "Simulation.h"
-#include <iomanip>
 
-Simulation::Simulation(double lambda, double mu, unsigned int capacity, double time_total) {
+Simulation::Simulation(double lambda, double mu, unsigned int capacity) {
     this->lambda = lambda;
     this->mu = mu;
     this->system_capacity = capacity;
-    this->time_total = time_total;
 }
 
 double Simulation::generate_interarrival() {
@@ -66,24 +64,32 @@ void Simulation::set_next_departure() {
 }
 
 void Simulation::handle_depart_event() {
-    this->time_pkts_system_total += this->packets.front().get_time_in_system();
+    if (!this->packets.empty()) {
+        this->time_pkts_system_total += this->packets.front().get_time_in_system();
 
-    this->packets.pop();
-    set_next_departure();
+        this->packets.pop();
+        set_next_departure();
+    }
 }
 
 void Simulation::simulate() {
-    double time_total, time_departure;
+    double time_last_event;
 
     while (this->time_current < this->time_total) {
-        double time_last_event = this->time_current;
+        time_last_event = this->time_current;
         update_time_current();
+
         this->sum_n_pkt_system += this->packets.size() * (this->time_current - time_last_event);
 
         if (is_arrival()) {
-            handle_arrival_event(this->time_arrival);
+            handle_arrival_event(this->time_current);
         } else {
             handle_depart_event();
         }
     }
+
+    this->probability_dropped_pkt = (double)this->n_pkt_dropped / this->n_pkt_total;
+    this->avg_n_pkt_system = this->sum_n_pkt_system / this->time_total;
+    this->avg_time_pkt_system = this->time_pkts_system_total / this->n_pkt_total;
+    this->avg_time_pkt_queue  = this->time_pkts_queue_total  / this->n_pkt_total;
 }
