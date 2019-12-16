@@ -28,4 +28,4 @@ $ make
 # Run the simulation in mode 1
 $ ./simulation 1
 ```
-<a href="https://imgur.com/NdpZB2b"><img src="https://i.imgur.com/NdpZB2b.gif" width="40%" style="min-width:600px" title="Simulation of a specific network queue" /></a>
+<a href="https://imgur.com/NdpZB2b"><img src="https://i.imgur.com/NdpZB2b.gif" width="650" title="Simulation of a specific network queue" /></a>
